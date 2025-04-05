@@ -10,6 +10,9 @@
             font-family: Comfortaa, sans-serif;
             text-align: center;
             margin-top: 50px;
+            background-size: contain; /* Ensures the background image fills the page */
+            background-repeat: no-repeat; /* Prevents tiling */
+            background-position: center; /* Centers the image */
         }
         #elapsed-time {
             font-size: 2em; /* Increase font size */
@@ -77,7 +80,13 @@
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
-        .dropdown:hover .dropdown-content {
+        /* Background Dropdown Hover Behavior */
+        .background-dropdown:hover > .dropdown-content {
+            display: block;
+        }
+
+        /* Ambiance Dropdown Hover Behavior */
+        .ambiance-dropdown:hover > .dropdown-content {
             display: block;
         }
         /* Sound button styling */
@@ -91,8 +100,20 @@
 </head>
 <body>
     <div class="top-right-container">
-        <!-- Dropdown menu -->
-        <div class="dropdown">
+        <!-- Background Dropdown -->
+        <div class="dropdown background-dropdown">
+            <button class="dropdown-button">Background</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="changeBackground('Library.JPG')">Library</a>
+                <a href="#" onclick="changeBackground('Beach.JPG')">Beach</a>
+                <a href="#" onclick="changeBackground('Night.JPG')">Night</a>
+                <a href="#" onclick="changeBackground('Field.JPG')">Field</a>
+                <a href="#" onclick="changeBackground('white')">White</a>
+                <a href="#" onclick="changeBackground('dark')">Dark Grey</a>
+            </div>
+        </div>
+            <!-- Ambiance Dropdown -->
+        <div class="dropdown ambiance-dropdown">
             <button class="dropdown-button">Ambiance</button>
             <div class="dropdown-content">
                 <a href="#" onclick="playSound('babble_brook')">Babbling Brook</a>
@@ -106,7 +127,6 @@
                 <a href="#" onclick="stopSound()">None</a>
             </div>
         </div>
-
         <!-- Sound button -->
         <button class="sound-button" id="soundButton" onclick="toggleMute()">
             🔊
@@ -245,6 +265,23 @@
         audioContext = null;
         audioBuffer = null;
         audioSource = null;
+
+        function changeBackground(option) {
+            const body = document.body;
+
+            if (option === 'white') {
+                body.style.backgroundImage = 'none';
+                body.style.backgroundColor = 'white';
+            } else if (option === 'dark') {
+                body.style.backgroundImage = 'none';
+                body.style.backgroundColor = '#333'; // Dark grey
+            } else {
+                body.style.backgroundImage = `url('/static/pictures/${option}')`;
+                body.style.backgroundSize = 'cover';
+                body.style.backgroundRepeat = 'no-repeat';
+                body.style.backgroundPosition = 'center';
+            }
+        }
 
         // Play a sound
     function playSound(sound) {
