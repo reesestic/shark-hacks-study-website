@@ -96,7 +96,26 @@
             cursor: pointer;
             font-size: 24px;
         }
+        .emoji-buttons {
+            margin-top: 100px;
+        }
+
+        .emoji-button {
+            font-size: 2rem;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid black;
+            border-radius: 25%;
+            background: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .emoji-button:hover {
+            transform: scale(1.2);
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="top-right-container">
@@ -150,6 +169,15 @@
         <button id="pause-button">Pause</button>
         <button id="reset-button">Reset</button>
     </div>
+
+    <div class="emoji-buttons">
+        <button class="emoji-button" onclick="handleEmojiClick('😭', event)">😭</button> <!-- Really Sad -->
+        <button class="emoji-button" onclick="handleEmojiClick('😢', event)">😢</button> <!-- Sad -->
+        <button class="emoji-button" onclick="handleEmojiClick('🤷', event)">🤷</button> <!-- Shrug -->
+        <button class="emoji-button" onclick="handleEmojiClick('😊', event)">😊</button> <!-- Happy -->
+        <button class="emoji-button" onclick="handleEmojiClick('🎉', event)">🎉</button> <!-- Confetti -->
+    </div>
+    <h2 id="motivational-text">This is a placeholder!</p>
 
     <script>
         let secondsElapsed = 0;
@@ -330,6 +358,67 @@
 
     // Preload sounds when the page loads
     window.onload = preloadSounds;
+
+    function handleEmojiClick(emoji, event = null) {
+        if (emoji === '🎉') {
+            // Confetti effect for the 🎉 button
+            if (event && event.target) {
+                const button = event.target;
+                const rect = button.getBoundingClientRect();
+                const x = (rect.left + rect.right) / 2 / window.innerWidth; // Normalize to 0-1
+                const y = (rect.top + rect.bottom) / 2 / window.innerHeight; // Normalize to 0-1
+
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { x: x, y: y }
+                });
+            }
+        } else {
+            // Emoji blast effect for other emojis
+            if (event && event.target) {
+                const button = event.target;
+                const rect = button.getBoundingClientRect();
+                const x = (rect.left + rect.right) / 2; // Center of the button (x-coordinate)
+                const y = (rect.top + rect.bottom) / 2; // Center of the button (y-coordinate)
+
+                for (let i = 0; i < 30; i++) {
+                    createEmojiParticle(emoji, x, y);
+                }
+            }
+        }
+    }
+
+    function createEmojiParticle(emoji, x, y) {
+        const particle = document.createElement('div');
+        particle.textContent = emoji;
+        particle.style.position = 'fixed'; // Use fixed positioning to avoid layout shifts
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.fontSize = `${Math.random() * 24 + 16}px`; // Random size between 16px and 40px
+        particle.style.opacity = 1;
+        particle.style.transition = 'transform 1s ease-out, opacity 1s ease-out, top 1s ease-out';
+
+        document.body.appendChild(particle);
+
+        // Randomize the direction and distance of the particle
+        const angle = Math.random() * 2 * Math.PI; // Random angle in radians
+        const distance = Math.random() * 200 + 50; // Random distance between 50px and 250px
+        const translateX = Math.cos(angle) * distance;
+        const translateY = Math.sin(angle) * distance;
+
+        // Trigger the animation
+        requestAnimationFrame(() => {
+            particle.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
+            particle.style.opacity = 0;
+        });
+
+        // Remove the particle after the animation ends
+        setTimeout(() => {
+            particle.remove();
+        }, 1000);
+    }
+
     </script>
 </body>
 </html>
