@@ -14,35 +14,76 @@
             font-size: 2em;
             color: #333;
         }
-        #start-button {
+        .controls {
             margin-top: 20px;
+        }
+        button {
+            margin: 5px;
             padding: 10px 20px;
             font-size: 1em;
             cursor: pointer;
+        }
+        input {
+            padding: 5px;
+            font-size: 1em;
+            width: 60px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>Mindfulness Timer</h1>
     <p>Stay focused and mindful while studying.</p>
+    <div>
+        <label for="time-limit">Set Timer (minutes): </label>
+        <input type="number" id="time-limit" min="1" placeholder="5">
+    </div>
     <div id="timer">0:00</div>
-    <button id="start-button">Start Timer</button>
+    <div class="controls">
+        <button id="start-button">Start</button>
+        <button id="pause-button">Pause</button>
+        <button id="reset-button">Reset</button>
+    </div>
 
     <script>
         let seconds = 0;
         let timerInterval = null;
+        let timeLimit = null;
 
         function updateTimer() {
             seconds++;
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
             document.getElementById('timer').textContent = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+
+            // Stop the timer if the time limit is reached
+            if (timeLimit !== null && seconds >= timeLimit * 60) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                alert("Time's up!");
+            }
         }
 
         document.getElementById('start-button').addEventListener('click', () => {
             if (!timerInterval) {
+                const inputLimit = document.getElementById('time-limit').value;
+                timeLimit = inputLimit ? parseInt(inputLimit, 10) : null;
                 timerInterval = setInterval(updateTimer, 1000);
             }
+        });
+
+        document.getElementById('pause-button').addEventListener('click', () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        });
+
+        document.getElementById('reset-button').addEventListener('click', () => {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            seconds = 0;
+            document.getElementById('timer').textContent = '0:00';
         });
     </script>
 </body>
