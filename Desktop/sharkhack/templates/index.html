@@ -10,6 +10,11 @@
             text-align: center;
             margin-top: 50px;
         }
+        #elapsed-time {
+            font-size: 2em; /* Increase font size */
+            font-weight: bold; /* Make it bold */
+            margin-bottom: 10px; /* Add spacing below */
+        }
         #progress-container {
             width: 80%;
             height: 30px;
@@ -50,6 +55,7 @@
         <label for="time-seconds">Seconds: </label>
         <input type="number" id="time-seconds" min="0" max="59" placeholder="0">
     </div>
+    <div id="elapsed-time">0:00</div>
     <div id="progress-container">
         <div id="progress-bar"></div>
     </div>
@@ -64,20 +70,28 @@
         let timerInterval = null;
         let timeLimit = null;
 
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
         function updateProgressBar() {
             secondsElapsed++;
             const progressPercentage = (secondsElapsed / timeLimit) * 100;
             document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
 
+            // Update elapsed time display
+            document.getElementById('elapsed-time').textContent = formatTime(secondsElapsed);
+
             // Stop the timer if the time limit is reached
             if (secondsElapsed >= timeLimit) {
                 clearInterval(timerInterval);
                 timerInterval = null;
-                alert("Time's up!");
             }
         }
 
-        document.getElementById('start-button').addEventListener('click', () => {
+        async function startTimer() {
             if (!timerInterval) {
                 const inputMinutes = document.getElementById('time-minutes').value;
                 const inputSeconds = document.getElementById('time-seconds').value;
@@ -90,12 +104,26 @@
                 if (timeLimit > 0) {
                     secondsElapsed = 0; // Reset elapsed time
                     document.getElementById('progress-bar').style.width = '0%'; // Reset progress bar
+                    document.getElementById('elapsed-time').textContent = formatTime(secondsElapsed); // Reset elapsed time display
                     timerInterval = setInterval(updateProgressBar, 1000);
+
+                    // Fetch timeout duration from the backend
+                    const response = await fetch('/get-timeout');
+                    const data = await response.json();
+
+                    // Set a timeout to show the alert half a second after the timer ends
+                    setTimeout(() => {
+                        if (secondsElapsed >= timeLimit) {
+                            alert("Time's up!");
+                        }
+                    }, (timeLimit * 1000) + 500); // Add 500ms delay
                 } else {
                     alert("Please set a valid time limit.");
                 }
             }
-        });
+        }
+
+        document.getElementById('start-button').addEventListener('click', startTimer);
 
         document.getElementById('pause-button').addEventListener('click', () => {
             if (timerInterval) {
@@ -109,6 +137,7 @@
             timerInterval = null;
             secondsElapsed = 0;
             document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('elapsed-time').textContent = formatTime(secondsElapsed);
         });
     </script>
 </body>

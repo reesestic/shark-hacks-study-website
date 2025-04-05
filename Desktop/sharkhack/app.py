@@ -11,6 +11,11 @@ def get_data():
     data = {"message": "Hello from the Python backend!"}
     return jsonify(data)
 
+@app.route('/get-timeout')
+def get_timeout():
+    timeout_duration = {"timeout": 10}  # Example: 10 seconds
+    return jsonify(timeout_duration)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
