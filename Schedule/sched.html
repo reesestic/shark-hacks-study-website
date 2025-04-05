@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Builder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Schedule Builder</h1>
+
+    <div id="availability-form">
+        <h2>Your Availability</h2>
+        <div id="availability-grid">
+            <!-- Availability grid will be generated here -->
+        </div>
+    </div>
+
+    <div id="task-form">
+        <h2>Add Task</h2>
+        <label for="task-name">Task Name:</label>
+        <input type="text" id="task-name" required><br>
+
+        <label for="task-duration">Duration (minutes):</label>
+        <input type="number" id="task-duration" min="15" step="15" value="30" required><br>
+
+        <label for="task-importance">Importance (1-5):</label>
+        <input type="number" id="task-importance" min="1" max="5" value="3" required><br>
+
+        <label for="task-day">Day:</label>
+        <select id="task-day">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select><br>
+
+        <button id="add-task-btn">Add Task</button>
+    </div>
+
+    <div id="schedule-container">
+        <h2>Schedules</h2>
+        <div id="schedule-selector">
+            <button class="schedule-btn active" data-schedule="0">Schedule 1</button>
+            <button class="schedule-btn" data-schedule="1">Schedule 2</button>
+            <button class="schedule-btn" data-schedule="2">Schedule 3</button>
+        </div>
+        <div id="calendar">
+            <!-- Calendar will be generated here -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
