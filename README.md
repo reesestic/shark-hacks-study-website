@@ -1,2 +1,2 @@
-# shark-hacks-study-website
-# shark-hacks-study-website
+# SharkHack 2025 Website Development
+# Team Members: Reese, Kevin, Olivia and Travis
