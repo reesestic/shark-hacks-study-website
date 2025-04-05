@@ -1,0 +1,44 @@
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    /* 24 hours */
+    border: 1px solid black;
+}
+
+.time-slot,
+.hour-header {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+}
+
+.task {
+    background-color: lightblue;
+    border: 1px solid blue;
+    padding: 5px;
+    text-align: center;
+}
+
+.schedule-btn {
+    margin: 5px;
+}
+
+.schedule-btn.active {
+    background-color: lightgreen;
+}
+
+#task-list>div {
+    margin-bottom: 10px;
+}
+
+#availability-grid {
+    display: grid;
+    grid-template-columns: repeat(25, 1fr);
+    /* 24 hours + time column */
+    border: 1px solid black;
+}
+
+.availability-checkbox {
+    width: 20px;
+    height: 20px;
+}
