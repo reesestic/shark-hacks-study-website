@@ -10,9 +10,19 @@
             text-align: center;
             margin-top: 50px;
         }
-        #timer {
-            font-size: 2em;
-            color: #333;
+        #progress-container {
+            width: 80%;
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #76c7c0;
+            transition: width 0.5s linear;
         }
         .controls {
             margin-top: 20px;
@@ -35,10 +45,14 @@
     <h1>Mindfulness Timer</h1>
     <p>Stay focused and mindful while studying.</p>
     <div>
-        <label for="time-limit">Set Timer (minutes): </label>
-        <input type="number" id="time-limit" min="1" placeholder="5">
+        <label for="time-minutes">Minutes: </label>
+        <input type="number" id="time-minutes" min="0" placeholder="0">
+        <label for="time-seconds">Seconds: </label>
+        <input type="number" id="time-seconds" min="0" max="59" placeholder="0">
     </div>
-    <div id="timer">0:00</div>
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
     <div class="controls">
         <button id="start-button">Start</button>
         <button id="pause-button">Pause</button>
@@ -46,18 +60,17 @@
     </div>
 
     <script>
-        let seconds = 0;
+        let secondsElapsed = 0;
         let timerInterval = null;
         let timeLimit = null;
 
-        function updateTimer() {
-            seconds++;
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            document.getElementById('timer').textContent = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        function updateProgressBar() {
+            secondsElapsed++;
+            const progressPercentage = (secondsElapsed / timeLimit) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
 
             // Stop the timer if the time limit is reached
-            if (timeLimit !== null && seconds >= timeLimit * 60) {
+            if (secondsElapsed >= timeLimit) {
                 clearInterval(timerInterval);
                 timerInterval = null;
                 alert("Time's up!");
@@ -66,9 +79,21 @@
 
         document.getElementById('start-button').addEventListener('click', () => {
             if (!timerInterval) {
-                const inputLimit = document.getElementById('time-limit').value;
-                timeLimit = inputLimit ? parseInt(inputLimit, 10) : null;
-                timerInterval = setInterval(updateTimer, 1000);
+                const inputMinutes = document.getElementById('time-minutes').value;
+                const inputSeconds = document.getElementById('time-seconds').value;
+
+                const minutes = inputMinutes ? parseInt(inputMinutes, 10) : 0;
+                const seconds = inputSeconds ? parseInt(inputSeconds, 10) : 0;
+
+                timeLimit = (minutes * 60) + seconds;
+
+                if (timeLimit > 0) {
+                    secondsElapsed = 0; // Reset elapsed time
+                    document.getElementById('progress-bar').style.width = '0%'; // Reset progress bar
+                    timerInterval = setInterval(updateProgressBar, 1000);
+                } else {
+                    alert("Please set a valid time limit.");
+                }
             }
         });
 
@@ -82,8 +107,8 @@
         document.getElementById('reset-button').addEventListener('click', () => {
             clearInterval(timerInterval);
             timerInterval = null;
-            seconds = 0;
-            document.getElementById('timer').textContent = '0:00';
+            secondsElapsed = 0;
+            document.getElementById('progress-bar').style.width = '0%';
         });
     </script>
 </body>
