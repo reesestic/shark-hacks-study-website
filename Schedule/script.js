@@ -9,6 +9,7 @@ const generateSchedulesBtn = document.getElementById('generate-schedules-btn');
 const scheduleSelector = document.getElementById('schedule-selector');
 const calendar = document.getElementById('calendar');
 const availabilityGrid = document.getElementById('availability-grid');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
 addTaskBtn.addEventListener('click', () => {
     const taskDiv = document.createElement('div');
@@ -56,6 +57,9 @@ function generateSchedules(tasks) {
 
 function scheduleTasks(tasks) {
     const schedule = {};
+    const taskColors = ['#add8e6', '#e6bbad']; // Two shades of blue
+    let colorIndex = 0;
+
     for (let i = 0; i < 24; i++) {
         schedule[i] = null;
     }
@@ -73,14 +77,15 @@ function scheduleTasks(tasks) {
 
             if (canSchedule) {
                 for (let hour = startHour; hour < startHour + task.duration; hour++) {
-                    schedule[hour] = task.name;
+                    schedule[hour] = { name: task.name, color: taskColors[colorIndex] };
                 }
                 taskScheduled = true;
+                colorIndex = (colorIndex + 1) % taskColors.length; // Alternate colors
                 break;
             }
         }
         if (!taskScheduled) {
-            console.log(`Task ${task.name} could not be scheduled`)
+            console.log(`Task ${task.name} could not be scheduled`);
         }
     }
     return schedule;
@@ -128,8 +133,9 @@ function renderCalendar() {
             const timeSlot = document.createElement('div');
             timeSlot.classList.add('time-slot');
             if (schedule[hour]) {
-                timeSlot.textContent = schedule[hour];
+                timeSlot.textContent = schedule[hour].name;
                 timeSlot.classList.add('task');
+                timeSlot.style.backgroundColor = schedule[hour].color; // Set task color
             }
             calendar.appendChild(timeSlot);
         }
@@ -177,3 +183,11 @@ function isTimeSlotAvailable(hour) {
 }
 
 generateAvailabilityGrid();
+
+// Set static button text
+themeToggleBtn.textContent = 'Toggle Theme';
+
+themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+    document.body.classList.toggle('light-theme');
+});
