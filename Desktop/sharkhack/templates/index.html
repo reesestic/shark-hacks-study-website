@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <p class="citation" id="citation" style="display: none;">Image by <a href="https://www.vecteezy.com" target="_blank" rel="noopener noreferrer">Vecteezy</a></p>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mindfulness Timer</title>
+    <title>Clock In!</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -102,6 +102,26 @@
         color: white; /* Makes the text white */
         }
 
+        .top-left-container {
+            position: absolute; /* Position it relative to the page */
+            top: 10px; /* Distance from the top */
+            left: 10px; /* Distance from the left */
+            z-index: 1000; /* Ensure it stays above other elements */
+        }
+
+        .home-btn {
+            background-color: #ffffff; /* Button background color */
+            color: #000000; /* Button text color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Add padding for size */
+            font-size: 1em; /* Font size */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        .home-btn:hover {
+            background-color: #5aa8a0; /* Darker background on hover */
+        }
+
         .citation {
             position: fixed; /* Fixes the position to the bottom-left corner */
             bottom: 10px; /* Distance from the bottom */
@@ -144,6 +164,9 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
+    <div class="top-left-container">
+        <a href="../Home/index.html"><button class="btn home-btn">Home</button></a>
+    </div>
     <div class="top-right-container">
         <!-- Background Dropdown -->
         <div class="dropdown background-dropdown">
@@ -178,8 +201,8 @@
         </button>
     </div>
     
-    <h1>Mindfulness Timer</h1>
-    <p>Stay focused and mindful while studying.</p>
+    <h1>Clock In!</h1>
+    <p>Get ready to Clock In for:</p>
     <div>
         <label for="time-minutes">Minutes: </label>
         <input type="number" id="time-minutes" min="0" placeholder="0">
