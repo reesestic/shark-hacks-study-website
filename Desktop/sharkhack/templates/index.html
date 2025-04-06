@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <p class="citation" id="citation" style="display: none;">Image by <a href="https://www.vecteezy.com" target="_blank" rel="noopener noreferrer">Vecteezy</a></p>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindfulness Timer</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
@@ -100,6 +101,44 @@
         .text-background {
         color: white; /* Makes the text white */
     }
+
+    .citation {
+        position: fixed; /* Fixes the position to the bottom-left corner */
+        bottom: 10px; /* Distance from the bottom */
+        left: 10px; /* Distance from the left */
+        font-size: 0.8em; /* Makes the text smaller */
+        color: #666; /* Light gray color for subtlety */
+        z-index: 1000; /* Ensures it stays above other elements */
+    }
+
+    .citation a {
+        color: #666; /* Matches the text color */
+        text-decoration: none; /* Removes underline */
+    }
+
+    .citation a:hover {
+        text-decoration: underline; /* Adds underline on hover */
+    }
+
+    .emoji-buttons {
+        margin-top: 20px;
+    }
+
+    .emoji-button {
+        font-size: 2rem;
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid black;
+        border-radius: 25%;
+        background: none;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .emoji-button:hover {
+        transform: scale(1.2);
+    }
+
     </style>
 </head>
 <body>
@@ -110,7 +149,7 @@
             <div class="dropdown-content">
                 <a href="#" onclick="changeBackground('Library.JPG')">Library</a>
                 <a href="#" onclick="changeBackground('Beach.JPG')">Beach</a>
-                <a href="#" onclick="changeBackground('Night.JPG')">Night</a>
+                <a href="#" onclick="changeBackground('Classical.JPG')">Classical</a>
                 <a href="#" onclick="changeBackground('Field.JPG')">Field</a>
                 <a href="#" onclick="changeBackground('white')">White</a>
                 <a href="#" onclick="changeBackground('steel blue')">Steel Blue</a>
@@ -155,6 +194,14 @@
         <button id="reset-button">Reset</button>
     </div>
 
+    <div class="emoji-buttons">
+        <button class="emoji-button" onclick="handleEmojiClick('😭', event)">😭</button> <!-- Really Sad -->
+        <button class="emoji-button" onclick="handleEmojiClick('😢', event)">😢</button> <!-- Sad -->
+        <button class="emoji-button" onclick="handleEmojiClick('🤷', event)">🤷</button> <!-- Shrug -->
+        <button class="emoji-button" onclick="handleEmojiClick('😊', event)">😊</button> <!-- Happy -->
+        <button class="emoji-button" onclick="handleEmojiClick('🎉', event)">🎉</button> <!-- Confetti -->
+    </div>
+
     <script>
         let secondsElapsed = 0;
         let timerInterval = null;
@@ -181,6 +228,11 @@
             }
         }
 
+        function toggleEmojiButtons(show) {
+            const emojiButtons = document.querySelector('.emoji-buttons');
+            emojiButtons.style.display = show ? 'block' : 'none'; // Show the emoji buttons
+        }
+
         async function startTimer() {
             if (!timerInterval) {
                 const inputMinutes = document.getElementById('time-minutes').value;
@@ -197,6 +249,7 @@
                     document.getElementById('elapsed-time').textContent = formatTime(secondsElapsed); // Reset elapsed time display
                     timerInterval = setInterval(updateProgressBar, 1000);
 
+                    toggleEmojiButtons(false);
                     // Fetch timeout duration from the backend
                     const response = await fetch('/get-timeout');
                     const data = await response.json();
@@ -205,6 +258,7 @@
                     setTimeout(() => {
                         if (secondsElapsed >= timeLimit) {
                             alert("Time's up!");
+                            toggleEmojiButtons(true);
                         }
                     }, (timeLimit * 1000) + 500); // Add 500ms delay
                 } else {
@@ -273,15 +327,18 @@
         function changeBackground(option) {
             const body = document.body;
             const textElements = document.querySelectorAll('h1, p, label, #elapsed-time'); // Select text elements
+            const citation = document.getElementById('citation'); // Get the citation element
 
             if (option === 'white') {
                 body.style.backgroundImage = 'none';
                 body.style.backgroundColor = 'white';
                 textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
+                citation.style.display = 'none'; // Hide the citation
             } else if (option === 'steel blue') {
                 body.style.backgroundImage = 'none';
                 body.style.backgroundColor = '#9EAFD2'; // Sky bluef
                 textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
+                citation.style.display = 'none'; // Hide the citation
             } else {
                 body.style.backgroundImage = `url('/static/pictures/${option}')`;
                 body.style.backgroundSize = 'cover'; // Ensures the image covers the screen
@@ -290,9 +347,16 @@
                 body.style.backgroundAttachment = 'fixed'; // Keeps the background fixed during scrolling
 
                         // Add background to text only for Library and Night
-                if (option === 'Library.JPG' || option === 'Night.JPG') {
+                if (option === 'Library.JPG')
+                {
+                    citation.style.display = 'block'; // Show the citation for Library
                     textElements.forEach(el => el.classList.add('text-background'));
-                } else {
+                } else if (option === 'Classical.JPG') {
+                    citation.style.display = 'none'; // Hide the citation for Night
+                    textElements.forEach(el => el.classList.add('text-background'));
+                }
+                else {
+                    citation.style.display = 'none'; // Hide the citation for Night
                     textElements.forEach(el => el.classList.remove('text-background'));
                 }
             }
@@ -345,6 +409,66 @@
 
     // Preload sounds when the page loads
     window.onload = preloadSounds;
+
+    function handleEmojiClick(emoji, event = null) {
+        if (emoji === '🎉') {
+            // Confetti effect for the 🎉 button
+            if (event && event.target) {
+                const button = event.target;
+                const rect = button.getBoundingClientRect();
+                const x = (rect.left + rect.right) / 2 / window.innerWidth; // Normalize to 0-1
+                const y = (rect.top + rect.bottom) / 2 / window.innerHeight; // Normalize to 0-1
+
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { x: x, y: y }
+                });
+            }
+        } else {
+            // Emoji blast effect for other emojis
+            if (event && event.target) {
+                const button = event.target;
+                const rect = button.getBoundingClientRect();
+                const x = (rect.left + rect.right) / 2; // Center of the button (x-coordinate)
+                const y = (rect.top + rect.bottom) / 2; // Center of the button (y-coordinate)
+
+                for (let i = 0; i < 30; i++) {
+                    createEmojiParticle(emoji, x, y);
+                }
+            }
+        }
+    }
+
+    function createEmojiParticle(emoji, x, y) {
+        const particle = document.createElement('div');
+        particle.textContent = emoji;
+        particle.style.position = 'fixed'; // Use fixed positioning to avoid layout shifts
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.fontSize = `${Math.random() * 24 + 16}px`; // Random size between 16px and 40px
+        particle.style.opacity = 1;
+        particle.style.transition = 'transform 1s ease-out, opacity 1s ease-out, top 1s ease-out';
+
+        document.body.appendChild(particle);
+
+        // Randomize the direction and distance of the particle
+        const angle = Math.random() * 2 * Math.PI; // Random angle in radians
+        const distance = Math.random() * 200 + 50; // Random distance between 50px and 250px
+        const translateX = Math.cos(angle) * distance;
+        const translateY = Math.sin(angle) * distance;
+
+        // Trigger the animation
+        requestAnimationFrame(() => {
+            particle.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
+            particle.style.opacity = 0;
+        });
+
+        // Remove the particle after the animation ends
+        setTimeout(() => {
+            particle.remove();
+        }, 1000);
+    }
     </script>
 </body>
 </html>
