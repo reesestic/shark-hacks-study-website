@@ -301,14 +301,13 @@
             'ocean_waves',
             'white_noise'
         ];
-
         
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
 
         for (const sound of sounds) {
-            const response = await fetch(`/static/sounds/${sound}.wav`);
+            const response = await fetch(`../static/sounds/${sound}.wav`);
             const arrayBuffer = await response.arrayBuffer();
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
             audioBuffers[sound] = audioBuffer; // Store the decoded audio buffer
