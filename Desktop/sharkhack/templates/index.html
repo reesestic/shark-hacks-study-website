@@ -251,9 +251,6 @@
                     timerInterval = setInterval(updateProgressBar, 1000);
 
                     toggleEmojiButtons(false);
-                    // Fetch timeout duration from the backend
-                    const response = await fetch('/get-timeout');
-                    const data = await response.json();
 
                     // Set a timeout to show the alert half a second after the timer ends
                     setTimeout(() => {
