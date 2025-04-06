@@ -97,7 +97,7 @@
             font-size: 24px;
         }
         .emoji-buttons {
-            margin-top: 100px;
+            margin-top: 20px;
         }
 
         .emoji-button {
@@ -177,7 +177,6 @@
         <button class="emoji-button" onclick="handleEmojiClick('😊', event)">😊</button> <!-- Happy -->
         <button class="emoji-button" onclick="handleEmojiClick('🎉', event)">🎉</button> <!-- Confetti -->
     </div>
-    <h2 id="motivational-text">This is a placeholder!</p>
 
     <script>
         let secondsElapsed = 0;
@@ -205,6 +204,11 @@
             }
         }
 
+        function toggleEmojiButtons(show) {
+            const emojiButtons = document.querySelector('.emoji-buttons');
+            emojiButtons.style.display = show ? 'block' : 'none'; // Show the emoji buttons
+        }
+
         async function startTimer() {
             if (!timerInterval) {
                 const inputMinutes = document.getElementById('time-minutes').value;
@@ -221,14 +225,13 @@
                     document.getElementById('elapsed-time').textContent = formatTime(secondsElapsed); // Reset elapsed time display
                     timerInterval = setInterval(updateProgressBar, 1000);
 
-                    // Fetch timeout duration from the backend
-                    const response = await fetch('/get-timeout');
-                    const data = await response.json();
+                    toggleEmojiButtons(false);
 
                     // Set a timeout to show the alert half a second after the timer ends
                     setTimeout(() => {
                         if (secondsElapsed >= timeLimit) {
                             alert("Time's up!");
+                            toggleEmojiButtons(true);
                         }
                     }, (timeLimit * 1000) + 500); // Add 500ms delay
                 } else {
