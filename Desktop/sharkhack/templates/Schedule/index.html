@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Daily Schedule Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body calss="light-theme">
+
+    <div class="top-left-container">
+        <a href="/home"><button class="btn home-btn">Home</button></a>
+    </div>
+
+    <h1>Daily Schedule Builder</h1>
+
+    <button id="theme-toggle-btn">Toggle Theme</button>
+
+    <div id="availability-form">
+        <h2>Your Availability</h2>
+        <div id="availability-grid">
+        </div>
+    </div>
+
+    <div id="task-input-area">
+        <h2>Add Tasks</h2>
+        <div id="task-list">
+        </div>
+        <button id="add-task-btn">Add Task</button>
+        <button id="generate-schedules-btn">Generate Schedules</button>
+    </div>
+
+    <div id="schedule-container">
+        <h2>Schedules</h2>
+        <div id="schedule-selector">
+        </div>
+        <div id="calendar">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+<style>
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    /* 24 hours */
+    border: 1px solid black;
+}
+
+.time-slot,
+.hour-header {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+}
+
+.task {
+    background-color: lightblue;
+    border: 1px solid rgb(33, 33, 141);
+    padding: 5px;
+    text-align: center;
+}
+
+.schedule-btn {
+    margin: 5px;
+}
+
+.schedule-btn.active {
+    background-color: lightgreen;
+}
+
+#task-list>div {
+    margin-bottom: 10px;
+}
+
+#availability-grid {
+    display: grid;
+    grid-template-columns: repeat(25, 1fr);
+    /* 24 hours + time column */
+    border: 1px solid black;
+}
+
+.availability-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+#availability-form,
+#task-input-area,
+#schedule-container {
+    margin: 20px 0; /* Adds vertical spacing between sections */
+    padding: 10px; /* Adds inner spacing within each section */
+    border: 1px solid #ccc; /* Optional: Adds a border for better visual separation */
+    border-radius: 5px; /* Optional: Rounds the corners of the sections */
+    background-color: #ffffff; /* Optional: Adds a light background color */
+}
+
+ h1{
+    font-family: Comfortaa;
+    font-size: 36px;
+    text-align: center;
+    color: #1c1f22; /* Change this to your preferred color */
+    margin-top: 20px;
+}
+
+body {
+    font-family: 'Comfortaa', sans-serif;
+    text-align: center;
+}
+
+body.light-theme {
+    background-color: #ffffff;
+    /* Removed color property to keep font colors consistent */
+}
+
+body.dark-theme {
+    background-color: #36393b;
+    /* Removed color property to keep font colors consistent */
+}
+
+body.dark-theme #schedule-container {
+    background-color: #2c2f33; /* Darker background for the schedule container */
+    border-color: #444; /* Optional: Darker border color */
+}
+
+body.dark-theme #availability-form {
+    background-color: #2c2f33; /* Darker background for the availability form */
+    border-color: #444; /* Optional: Darker border color */
+}
+
+body.dark-theme #task-input-area {
+    background-color: #2c2f33; /* Darker background for the task input area */
+    border-color: #444; /* Optional: Darker border color */
+}
+
+button#theme-toggle-btn {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+body.light-theme button#theme-toggle-btn {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+body.dark-theme button#theme-toggle-btn {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.home-btn {
+    position: absolute; /* Position the button relative to the top-left corner */
+    top: 10px; /* Distance from the top */
+    left: 10px; /* Distance from the left */
+    background-color: #ffffff; /* Button background color */
+    color: #000000; /* Button text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding for size */
+    font-size: 1em; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.home-btn:hover {
+    background-color: #5aa8a0; /* Darker background on hover */
+}
+</style>
+<script> 
+    let tasks = [];
+    let schedules = [];
+    let currentSchedule = 0;
+    let availability = {};
+    
+    const taskList = document.getElementById('task-list');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const generateSchedulesBtn = document.getElementById('generate-schedules-btn');
+    const scheduleSelector = document.getElementById('schedule-selector');
+    const calendar = document.getElementById('calendar');
+    const availabilityGrid = document.getElementById('availability-grid');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    
+    addTaskBtn.addEventListener('click', () => {
+        const taskDiv = document.createElement('div');
+        taskDiv.innerHTML = `
+            <input type="text" placeholder="Task Name">
+            <input type="number" placeholder="Duration (hours)">
+            <input type="number" placeholder="Importance (1-5)">
+            <button class="remove-task-btn">Remove</button>
+        `;
+        taskList.appendChild(taskDiv);
+    
+        taskDiv.querySelector('.remove-task-btn').addEventListener('click', () => {
+            taskDiv.remove();
+        });
+    });
+    
+    generateSchedulesBtn.addEventListener('click', () => {
+        tasks = [];
+        schedules = [];
+        currentSchedule = 0;
+    
+        taskList.querySelectorAll('div').forEach(taskDiv => {
+            const inputs = taskDiv.querySelectorAll('input');
+            tasks.push({
+                name: inputs[0].value,
+                duration: parseInt(inputs[1].value),
+                importance: parseInt(inputs[2].value),
+            });
+        });
+    
+        schedules = generateSchedules(tasks);
+        renderSchedules();
+    });
+    
+    function generateSchedules(tasks) {
+        const sortedTasks = tasks.slice().sort((a, b) => b.importance - a.importance);
+        const shuffledTasks = tasks.slice().sort(() => Math.random() - 0.5);
+    
+        return [
+            scheduleTasks(sortedTasks),
+            scheduleTasks(shuffledTasks),
+            scheduleTasks(tasks.slice().sort(() => Math.random() - 0.5))
+        ];
+    }
+    
+    function scheduleTasks(tasks) {
+        const schedule = {};
+        const taskColors = ['#add8e6', '#e6bbad']; // Two shades of blue
+        let colorIndex = 0;
+    
+        for (let i = 0; i < 24; i++) {
+            schedule[i] = null;
+        }
+    
+        for (const task of tasks) {
+            let taskScheduled = false;
+            for (let startHour = 0; startHour <= 24 - task.duration; startHour++) {
+                let canSchedule = true;
+                for (let hour = startHour; hour < startHour + task.duration; hour++) {
+                    if (schedule[hour] || !isTimeSlotAvailable(hour)) {
+                        canSchedule = false;
+                        break;
+                    }
+                }
+    
+                if (canSchedule) {
+                    for (let hour = startHour; hour < startHour + task.duration; hour++) {
+                        schedule[hour] = { name: task.name, color: taskColors[colorIndex] };
+                    }
+                    taskScheduled = true;
+                    colorIndex = (colorIndex + 1) % taskColors.length; // Alternate colors
+                    break;
+                }
+            }
+            if (!taskScheduled) {
+                console.log(`Task ${task.name} could not be scheduled`);
+            }
+        }
+        return schedule;
+    }
+    
+    function renderSchedules() {
+        scheduleSelector.innerHTML = '';
+        schedules.forEach((_, index) => {
+            const button = document.createElement('button');
+            button.classList.add('schedule-btn');
+            button.textContent = `Schedule ${index + 1}`;
+            button.addEventListener('click', () => {
+                currentSchedule = index;
+                renderCalendar();
+                document.querySelectorAll('.schedule-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+            scheduleSelector.appendChild(button);
+        });
+    
+        if (schedules.length > 0) {
+            scheduleSelector.firstChild.classList.add('active');
+            renderCalendar();
+        }
+    }
+    
+    function renderCalendar() {
+        calendar.innerHTML = '';
+    
+        // Header row
+        const headerRow = document.createElement('div');
+        headerRow.classList.add('hour-header');
+        headerRow.textContent = "Time";
+        calendar.appendChild(headerRow);
+        for (let hour = 0; hour < 24; hour++) {
+            const hourHeader = document.createElement('div');
+            hourHeader.classList.add('hour-header');
+            hourHeader.textContent = `${hour}:00`;
+            calendar.appendChild(hourHeader);
+        }
+    
+        if (schedules.length > 0) {
+            const schedule = schedules[currentSchedule];
+            for (let hour = 0; hour < 24; hour++) {
+                const timeSlot = document.createElement('div');
+                timeSlot.classList.add('time-slot');
+                if (schedule[hour]) {
+                    timeSlot.textContent = schedule[hour].name;
+                    timeSlot.classList.add('task');
+                    timeSlot.style.backgroundColor = schedule[hour].color; // Set task color
+                }
+                calendar.appendChild(timeSlot);
+            }
+        }
+    }
+    
+    function generateAvailabilityGrid() {
+        availabilityGrid.innerHTML = '';
+    
+        // Create header row with time labels
+        const headerRow = document.createElement('div');
+        headerRow.classList.add('hour-header');
+        headerRow.textContent = "Time";
+        availabilityGrid.appendChild(headerRow);
+    
+        for (let hour = 0; hour < 24; hour++) {
+            const hourHeader = document.createElement('div');
+            hourHeader.classList.add('hour-header');
+            hourHeader.textContent = `${hour}:00`;
+            availabilityGrid.appendChild(hourHeader);
+        }
+    
+        // Create checkbox row for availability
+        const checkboxLabel = document.createElement('div'); // Create an empty first cell
+        checkboxLabel.classList.add('hour-header');
+        checkboxLabel.textContent = "";
+        availabilityGrid.appendChild(checkboxLabel);
+    
+        for (let hour = 0; hour < 24; hour++) {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.classList.add('availability-checkbox');
+            checkbox.id = `availability-${hour}`;
+            checkbox.checked = true; // Default to available
+            availabilityGrid.appendChild(checkbox);
+    
+            checkbox.addEventListener('change', () => {
+                availability[hour] = checkbox.checked;
+            });
+        }
+    }
+    
+    function isTimeSlotAvailable(hour) {
+        return availability[hour] !== false;
+    }
+    
+    generateAvailabilityGrid();
+    
+    // Set static button text
+    themeToggleBtn.textContent = 'Toggle Theme';
+    
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        document.body.classList.toggle('light-theme');
+    });
+</script>
+</html>
