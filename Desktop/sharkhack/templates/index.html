@@ -312,6 +312,14 @@
         let audioSource = null;
         let gainNode = null; // For controlling volume
 
+        function initializeAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioContext.createGain();
+                gainNode.connect(audioContext.destination);
+            }
+        }
+
         // Preload audio files
         async function preloadSounds() {
             const sounds = [
@@ -324,10 +332,6 @@
                 'ocean_waves',
                 'white_noise'
             ];
-            
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
 
             for (const sound of sounds) {
                 const response = await fetch(`../static/sounds/${sound}.wav`);
@@ -335,15 +339,8 @@
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
                 audioBuffers[sound] = audioBuffer; // Store the decoded audio buffer
             }
-
-            // Initialize the gain node for volume control
-            gainNode = audioContext.createGain();
-            gainNode.connect(audioContext.destination);
         }
 
-            audioContext = null;
-            audioBuffer = null;
-            audioSource = null;
 
             function changeBackground(option) {
                 const body = document.body;
@@ -384,26 +381,28 @@
             }
 
             // Play a sound
-        function playSound(sound) {
-            if (audioSource) {
-                audioSource.stop(); // Stop any currently playing sound
-                audioSource.disconnect();
+            function playSound(sound) {
+                initializeAudioContext(); // Ensure AudioContext is initialized
+
+                if (audioSource) {
+                    audioSource.stop(); // Stop any currently playing sound
+                    audioSource.disconnect();
+                }
+
+                if (sound === 'none') {
+                    audioSource = null;
+                    return;
+                }
+
+                // Create a new audio source and connect it to the gain node
+                audioSource = audioContext.createBufferSource();
+                audioSource.buffer = audioBuffers[sound]; // Use preloaded audio buffer
+                audioSource.loop = true; // Enable seamless looping
+                audioSource.connect(gainNode);
+
+                // Start playback
+                audioSource.start(0);
             }
-
-            if (sound === 'none') {
-                audioSource = null;
-                return;
-            }
-
-            // Create a new audio source and connect it to the gain node
-            audioSource = audioContext.createBufferSource();
-            audioSource.buffer = audioBuffers[sound]; // Use preloaded audio buffer
-            audioSource.loop = true; // Enable seamless looping
-            audioSource.connect(gainNode);
-
-            // Start playback
-            audioSource.start(0);
-        }
 
             // Stop the currently playing sound
         function stopSound() {
@@ -429,7 +428,10 @@
         }
 
         // Preload sounds when the page loads
-        window.onload = preloadSounds;
+        window.onload = async () => {
+            initializeAudioContext(); // Initialize AudioContext on page load
+            await preloadSounds(); // Preload sounds
+        };
 
         function handleEmojiClick(emoji, event = null) {
             if (emoji === '🎉') {
