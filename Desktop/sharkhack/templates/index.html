@@ -165,7 +165,7 @@
 </head>
 <body>
     <div class="top-left-container">
-        <a href="/home"><button class="btn home-btn">Home</button></a>
+        <a href="/"><button class="btn home-btn">Home</button></a>
     </div>
     <div class="top-right-container">
         <!-- Background Dropdown -->
@@ -226,8 +226,9 @@
         <button class="emoji-button" onclick="handleEmojiClick('😊', event)">😊</button> <!-- Happy -->
         <button class="emoji-button" onclick="handleEmojiClick('🎉', event)">🎉</button> <!-- Confetti -->
     </div>
-
     <script>
+
+
         let secondsElapsed = 0;
         let timerInterval = null;
         let timeLimit = null;
@@ -493,5 +494,21 @@
             }, 1000);
         }
     </script>
+<style>
+    .bottom-middle-box {
+        position: fixed; /* Fixes the box to the bottom center of the viewport */
+        bottom: 20px; /* Distance from the bottom of the page */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Adjust for the box's width to center it */
+        background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+        color: white; /* White text color */
+        padding: 10px 20px; /* Padding inside the box */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 1em; /* Font size */
+        text-align: center; /* Center the text */
+        z-index: 1000; /* Ensure it stays above other elements */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Optional: Adds a shadow for better visibility */
+    }
+</style>
 </body>
 </html>

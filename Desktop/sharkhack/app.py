@@ -3,14 +3,13 @@ from flask import Flask, jsonify, render_template
 app = Flask(__name__, template_folder='templates')
 
 @app.route('/')
-def index():
+def home():  # Change the default route to render the Home page
+    return render_template('Home/index.html')
+
+@app.route('/study')
+def study():  # Add a new route for the Study page
     return render_template('index.html')
 
-@app.route('/home')
-def home():
-    return render_template('Home/index.html')  # Adjust the path if necessary
-
-# filepath: /Users/kevinkupeli/Desktop/shark-hacks-study-website-2/Desktop/sharkhack/app.py
 @app.route('/schedule')
 def schedule():
     return render_template('Schedule/index.html')
