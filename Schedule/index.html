@@ -1,56 +1,40 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Schedule Builder</title>
+    <title>Daily Schedule Builder</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <h1>Schedule Builder</h1>
+
+<body calss="light-theme">
+    <h1>Daily Schedule Builder</h1>
+
+    <button id="theme-toggle-btn">Toggle Theme</button>
 
     <div id="availability-form">
         <h2>Your Availability</h2>
         <div id="availability-grid">
-            <!-- Availability grid will be generated here -->
         </div>
     </div>
 
-    <div id="task-form">
-        <h2>Add Task</h2>
-        <label for="task-name">Task Name:</label>
-        <input type="text" id="task-name" required><br>
-
-        <label for="task-duration">Duration (minutes):</label>
-        <input type="number" id="task-duration" min="15" step="15" value="30" required><br>
-
-        <label for="task-importance">Importance (1-5):</label>
-        <input type="number" id="task-importance" min="1" max="5" value="3" required><br>
-
-        <label for="task-day">Day:</label>
-        <select id="task-day">
-            <option value="Monday">Monday</option>
-            <option value="Tuesday">Tuesday</option>
-            <option value="Wednesday">Wednesday</option>
-            <option value="Thursday">Thursday</option>
-            <option value="Friday">Friday</option>
-            <option value="Saturday">Saturday</option>
-            <option value="Sunday">Sunday</option>
-        </select><br>
-
+    <div id="task-input-area">
+        <h2>Add Tasks</h2>
+        <div id="task-list">
+        </div>
         <button id="add-task-btn">Add Task</button>
+        <button id="generate-schedules-btn">Generate Schedules</button>
     </div>
 
     <div id="schedule-container">
         <h2>Schedules</h2>
         <div id="schedule-selector">
-            <button class="schedule-btn active" data-schedule="0">Schedule 1</button>
-            <button class="schedule-btn" data-schedule="1">Schedule 2</button>
-            <button class="schedule-btn" data-schedule="2">Schedule 3</button>
         </div>
         <div id="calendar">
-            <!-- Calendar will be generated here -->
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -1,0 +1,110 @@
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    /* 24 hours */
+    border: 1px solid black;
+}
+
+.time-slot,
+.hour-header {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+}
+
+.task {
+    background-color: lightblue;
+    border: 1px solid rgb(33, 33, 141);
+    padding: 5px;
+    text-align: center;
+}
+
+.schedule-btn {
+    margin: 5px;
+}
+
+.schedule-btn.active {
+    background-color: lightgreen;
+}
+
+#task-list>div {
+    margin-bottom: 10px;
+}
+
+#availability-grid {
+    display: grid;
+    grid-template-columns: repeat(25, 1fr);
+    /* 24 hours + time column */
+    border: 1px solid black;
+}
+
+.availability-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+#availability-form,
+#task-input-area,
+#schedule-container {
+    margin: 20px 0; /* Adds vertical spacing between sections */
+    padding: 10px; /* Adds inner spacing within each section */
+    border: 1px solid #ccc; /* Optional: Adds a border for better visual separation */
+    border-radius: 5px; /* Optional: Rounds the corners of the sections */
+    background-color: #ffffff; /* Optional: Adds a light background color */
+}
+
+ h1{
+    font-family: Comfortaa;
+    font-size: 36px;
+    text-align: center;
+    color: #1c1f22; /* Change this to your preferred color */
+    margin-top: 20px;
+}
+
+body {
+    font-family: 'Comfortaa', sans-serif;
+    text-align: center;
+}
+
+body.light-theme {
+    background-color: #ffffff;
+    /* Removed color property to keep font colors consistent */
+}
+
+body.dark-theme {
+    background-color: #36393b;
+    /* Removed color property to keep font colors consistent */
+}
+
+body.dark-theme #schedule-container {
+    background-color: #2c2f33; /* Darker background for the schedule container */
+    border-color: #444; /* Optional: Darker border color */
+}
+
+body.dark-theme #availability-form {
+    background-color: #2c2f33; /* Darker background for the availability form */
+    border-color: #444; /* Optional: Darker border color */
+}
+
+body.dark-theme #task-input-area {
+    background-color: #2c2f33; /* Darker background for the task input area */
+    border-color: #444; /* Optional: Darker border color */
+}
+
+button#theme-toggle-btn {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+body.light-theme button#theme-toggle-btn {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+body.dark-theme button#theme-toggle-btn {
+    background-color: #ffffff;
+    color: #000000;
+}
