@@ -108,3 +108,19 @@ body.dark-theme button#theme-toggle-btn {
     background-color: #ffffff;
     color: #000000;
 }
+
+.home-btn {
+    position: absolute; /* Position the button relative to the top-left corner */
+    top: 10px; /* Distance from the top */
+    left: 10px; /* Distance from the left */
+    background-color: #ffffff; /* Button background color */
+    color: #000000; /* Button text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding for size */
+    font-size: 1em; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.home-btn:hover {
+    background-color: #5aa8a0; /* Darker background on hover */
+}
