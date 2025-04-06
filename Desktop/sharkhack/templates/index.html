@@ -100,44 +100,45 @@
 
         .text-background {
         color: white; /* Makes the text white */
-    }
+        }
 
-    .citation {
-        position: fixed; /* Fixes the position to the bottom-left corner */
-        bottom: 10px; /* Distance from the bottom */
-        left: 10px; /* Distance from the left */
-        font-size: 0.8em; /* Makes the text smaller */
-        color: #666; /* Light gray color for subtlety */
-        z-index: 1000; /* Ensures it stays above other elements */
-    }
+        .citation {
+            position: fixed; /* Fixes the position to the bottom-left corner */
+            bottom: 10px; /* Distance from the bottom */
+            left: 10px; /* Distance from the left */
+            font-size: 0.8em; /* Makes the text smaller */
+            color: #666; /* Light gray color for subtlety */
+            z-index: 1000; /* Ensures it stays above other elements */
+        }
 
-    .citation a {
-        color: #666; /* Matches the text color */
-        text-decoration: none; /* Removes underline */
-    }
+        .citation a {
+            color: #666; /* Matches the text color */
+            text-decoration: none; /* Removes underline */
+        }
 
-    .citation a:hover {
-        text-decoration: underline; /* Adds underline on hover */
-    }
+        .citation a:hover {
+            text-decoration: underline; /* Adds underline on hover */
+        }
 
-    .emoji-buttons {
-        margin-top: 20px;
-    }
+        .emoji-buttons {
+            margin-top: 20px;
+        }
 
-    .emoji-button {
-        font-size: 2rem;
-        padding: 10px;
-        margin: 5px;
-        border: 1px solid black;
-        border-radius: 25%;
-        background: none;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-    }
+        .emoji-button {
+            font-size: 2rem;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid black;
+            background-color: white;
+            border-radius: 25%;
+            background: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
 
-    .emoji-button:hover {
-        transform: scale(1.2);
-    }
+        .emoji-button:hover {
+            transform: scale(1.2);
+        }
 
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -148,10 +149,10 @@
         <div class="dropdown background-dropdown">
             <button class="dropdown-button">Background</button>
             <div class="dropdown-content">
-                <a href="#" onclick="changeBackground('Library.JPG')">Library</a>
-                <a href="#" onclick="changeBackground('Beach.JPG')">Beach</a>
-                <a href="#" onclick="changeBackground('Classical.JPG')">Classical</a>
-                <a href="#" onclick="changeBackground('Field.JPG')">Field</a>
+                <a href="#" onclick="changeBackground('Library.jpg')">Library</a>
+                <a href="#" onclick="changeBackground('Beach.jpg')">Beach</a>
+                <a href="#" onclick="changeBackground('Classical.jpg')">Classical</a>
+                <a href="#" onclick="changeBackground('Field.jpg')">Field</a>
                 <a href="#" onclick="changeBackground('white')">White</a>
                 <a href="#" onclick="changeBackground('steel blue')">Steel Blue</a>
             </div>
@@ -338,7 +339,7 @@
                 textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
                 citation.style.display = 'none'; // Hide the citation
             } else {
-                body.style.backgroundImage = `url('/static/pictures/${option}')`;
+                body.style.backgroundImage = `url('../static/pictures/${option}')`;
                 body.style.backgroundSize = 'cover'; // Ensures the image covers the screen
                 body.style.backgroundRepeat = 'no-repeat';
                 body.style.backgroundPosition = 'center center';
