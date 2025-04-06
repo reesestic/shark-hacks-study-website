@@ -307,189 +307,189 @@
         });
 
         let isMuted = false; // Use the existing isMuted variable
-    let audioContext = null;
-    let audioBuffers = {}; // Store preloaded audio buffers
-    let audioSource = null;
-    let gainNode = null; // For controlling volume
+        let audioContext = null;
+        let audioBuffers = {}; // Store preloaded audio buffers
+        let audioSource = null;
+        let gainNode = null; // For controlling volume
 
-    // Preload audio files
-    async function preloadSounds() {
-        const sounds = [
-            'babble_brook',
-            'birds',
-            'brown_noise',
-            'campfire',
-            'coffee_shop',
-            'light_rain',
-            'ocean_waves',
-            'white_noise'
-        ];
-        
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Preload audio files
+        async function preloadSounds() {
+            const sounds = [
+                'babble_brook',
+                'birds',
+                'brown_noise',
+                'campfire',
+                'coffee_shop',
+                'light_rain',
+                'ocean_waves',
+                'white_noise'
+            ];
+            
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            for (const sound of sounds) {
+                const response = await fetch(`../static/sounds/${sound}.wav`);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                audioBuffers[sound] = audioBuffer; // Store the decoded audio buffer
+            }
+
+            // Initialize the gain node for volume control
+            gainNode = audioContext.createGain();
+            gainNode.connect(audioContext.destination);
         }
 
-        for (const sound of sounds) {
-            const response = await fetch(`../static/sounds/${sound}.wav`);
-            const arrayBuffer = await response.arrayBuffer();
-            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-            audioBuffers[sound] = audioBuffer; // Store the decoded audio buffer
+            audioContext = null;
+            audioBuffer = null;
+            audioSource = null;
+
+            function changeBackground(option) {
+                const body = document.body;
+                const textElements = document.querySelectorAll('h1, p, label, #elapsed-time'); // Select text elements
+                const citation = document.getElementById('citation'); // Get the citation element
+
+                if (option === 'white') {
+                    body.style.backgroundImage = 'none';
+                    body.style.backgroundColor = 'white';
+                    textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
+                    citation.style.display = 'none'; // Hide the citation
+                } else if (option === 'steel blue') {
+                    body.style.backgroundImage = 'none';
+                    body.style.backgroundColor = '#9EAFD2'; // Sky bluef
+                    textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
+                    citation.style.display = 'none'; // Hide the citation
+                } else {
+                    body.style.backgroundImage = `url('../static/pictures/${option}')`;
+                    body.style.backgroundSize = 'cover'; // Ensures the image covers the screen
+                    body.style.backgroundRepeat = 'no-repeat';
+                    body.style.backgroundPosition = 'center center';
+                    body.style.backgroundAttachment = 'fixed'; // Keeps the background fixed during scrolling
+
+                            // Add background to text only for Library and Night
+                    if (option === 'Library.jpg')
+                    {
+                        citation.style.display = 'block'; // Show the citation for Library
+                        textElements.forEach(el => el.classList.add('text-background'));
+                    } else if (option === 'Classical.jpg') {
+                        citation.style.display = 'none'; // Hide the citation for Night
+                        textElements.forEach(el => el.classList.add('text-background'));
+                    }
+                    else {
+                        citation.style.display = 'none'; // Hide the citation for Night
+                        textElements.forEach(el => el.classList.remove('text-background'));
+                    }
+                }
+            }
+
+            // Play a sound
+        function playSound(sound) {
+            if (audioSource) {
+                audioSource.stop(); // Stop any currently playing sound
+                audioSource.disconnect();
+            }
+
+            if (sound === 'none') {
+                audioSource = null;
+                return;
+            }
+
+            // Create a new audio source and connect it to the gain node
+            audioSource = audioContext.createBufferSource();
+            audioSource.buffer = audioBuffers[sound]; // Use preloaded audio buffer
+            audioSource.loop = true; // Enable seamless looping
+            audioSource.connect(gainNode);
+
+            // Start playback
+            audioSource.start(0);
         }
 
-        // Initialize the gain node for volume control
-        gainNode = audioContext.createGain();
-        gainNode.connect(audioContext.destination);
-    }
+            // Stop the currently playing sound
+        function stopSound() {
+            if (audioSource) {
+                audioSource.stop();
+                audioSource.disconnect();
+                audioSource = null;
+            }
+        }
 
-        audioContext = null;
-        audioBuffer = null;
-        audioSource = null;
+        // Toggle mute
+        function toggleMute() {
+            const soundButton = document.getElementById('soundButton');
+            isMuted = !isMuted;
 
-        function changeBackground(option) {
-            const body = document.body;
-            const textElements = document.querySelectorAll('h1, p, label, #elapsed-time'); // Select text elements
-            const citation = document.getElementById('citation'); // Get the citation element
-
-            if (option === 'white') {
-                body.style.backgroundImage = 'none';
-                body.style.backgroundColor = 'white';
-                textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
-                citation.style.display = 'none'; // Hide the citation
-            } else if (option === 'steel blue') {
-                body.style.backgroundImage = 'none';
-                body.style.backgroundColor = '#9EAFD2'; // Sky bluef
-                textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
-                citation.style.display = 'none'; // Hide the citation
+            if (isMuted) {
+                soundButton.textContent = '🔇'; // Mute icon
+                if (gainNode) gainNode.gain.setValueAtTime(0, audioContext.currentTime); // Set volume to 0
             } else {
-                body.style.backgroundImage = `url('../static/pictures/${option}')`;
-                body.style.backgroundSize = 'cover'; // Ensures the image covers the screen
-                body.style.backgroundRepeat = 'no-repeat';
-                body.style.backgroundPosition = 'center center';
-                body.style.backgroundAttachment = 'fixed'; // Keeps the background fixed during scrolling
-
-                        // Add background to text only for Library and Night
-                if (option === 'Library.jpg')
-                {
-                    citation.style.display = 'block'; // Show the citation for Library
-                    textElements.forEach(el => el.classList.add('text-background'));
-                } else if (option === 'Classical.jpg') {
-                    citation.style.display = 'none'; // Hide the citation for Night
-                    textElements.forEach(el => el.classList.add('text-background'));
-                }
-                else {
-                    citation.style.display = 'none'; // Hide the citation for Night
-                    textElements.forEach(el => el.classList.remove('text-background'));
-                }
+                soundButton.textContent = '🔊'; // Sound icon
+                if (gainNode) gainNode.gain.setValueAtTime(1, audioContext.currentTime); // Restore volume
             }
         }
 
-        // Play a sound
-    function playSound(sound) {
-        if (audioSource) {
-            audioSource.stop(); // Stop any currently playing sound
-            audioSource.disconnect();
-        }
+        // Preload sounds when the page loads
+        window.onload = preloadSounds;
 
-        if (sound === 'none') {
-            audioSource = null;
-            return;
-        }
+        function handleEmojiClick(emoji, event = null) {
+            if (emoji === '🎉') {
+                // Confetti effect for the 🎉 button
+                if (event && event.target) {
+                    const button = event.target;
+                    const rect = button.getBoundingClientRect();
+                    const x = (rect.left + rect.right) / 2 / window.innerWidth; // Normalize to 0-1
+                    const y = (rect.top + rect.bottom) / 2 / window.innerHeight; // Normalize to 0-1
 
-        // Create a new audio source and connect it to the gain node
-        audioSource = audioContext.createBufferSource();
-        audioSource.buffer = audioBuffers[sound]; // Use preloaded audio buffer
-        audioSource.loop = true; // Enable seamless looping
-        audioSource.connect(gainNode);
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { x: x, y: y }
+                    });
+                }
+            } else {
+                // Emoji blast effect for other emojis
+                if (event && event.target) {
+                    const button = event.target;
+                    const rect = button.getBoundingClientRect();
+                    const x = (rect.left + rect.right) / 2; // Center of the button (x-coordinate)
+                    const y = (rect.top + rect.bottom) / 2; // Center of the button (y-coordinate)
 
-        // Start playback
-        audioSource.start(0);
-    }
-
-        // Stop the currently playing sound
-    function stopSound() {
-        if (audioSource) {
-            audioSource.stop();
-            audioSource.disconnect();
-            audioSource = null;
-        }
-    }
-
-    // Toggle mute
-    function toggleMute() {
-        const soundButton = document.getElementById('soundButton');
-        isMuted = !isMuted;
-
-        if (isMuted) {
-            soundButton.textContent = '🔇'; // Mute icon
-            if (gainNode) gainNode.gain.setValueAtTime(0, audioContext.currentTime); // Set volume to 0
-        } else {
-            soundButton.textContent = '🔊'; // Sound icon
-            if (gainNode) gainNode.gain.setValueAtTime(1, audioContext.currentTime); // Restore volume
-        }
-    }
-
-    // Preload sounds when the page loads
-    window.onload = preloadSounds;
-
-    function handleEmojiClick(emoji, event = null) {
-        if (emoji === '🎉') {
-            // Confetti effect for the 🎉 button
-            if (event && event.target) {
-                const button = event.target;
-                const rect = button.getBoundingClientRect();
-                const x = (rect.left + rect.right) / 2 / window.innerWidth; // Normalize to 0-1
-                const y = (rect.top + rect.bottom) / 2 / window.innerHeight; // Normalize to 0-1
-
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { x: x, y: y }
-                });
-            }
-        } else {
-            // Emoji blast effect for other emojis
-            if (event && event.target) {
-                const button = event.target;
-                const rect = button.getBoundingClientRect();
-                const x = (rect.left + rect.right) / 2; // Center of the button (x-coordinate)
-                const y = (rect.top + rect.bottom) / 2; // Center of the button (y-coordinate)
-
-                for (let i = 0; i < 30; i++) {
-                    createEmojiParticle(emoji, x, y);
+                    for (let i = 0; i < 30; i++) {
+                        createEmojiParticle(emoji, x, y);
+                    }
                 }
             }
         }
-    }
 
-    function createEmojiParticle(emoji, x, y) {
-        const particle = document.createElement('div');
-        particle.textContent = emoji;
-        particle.style.position = 'fixed'; // Use fixed positioning to avoid layout shifts
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
-        particle.style.fontSize = `${Math.random() * 24 + 16}px`; // Random size between 16px and 40px
-        particle.style.opacity = 1;
-        particle.style.transition = 'transform 1s ease-out, opacity 1s ease-out, top 1s ease-out';
+        function createEmojiParticle(emoji, x, y) {
+            const particle = document.createElement('div');
+            particle.textContent = emoji;
+            particle.style.position = 'fixed'; // Use fixed positioning to avoid layout shifts
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            particle.style.fontSize = `${Math.random() * 24 + 16}px`; // Random size between 16px and 40px
+            particle.style.opacity = 1;
+            particle.style.transition = 'transform 1s ease-out, opacity 1s ease-out, top 1s ease-out';
 
-        document.body.appendChild(particle);
+            document.body.appendChild(particle);
 
-        // Randomize the direction and distance of the particle
-        const angle = Math.random() * 2 * Math.PI; // Random angle in radians
-        const distance = Math.random() * 200 + 50; // Random distance between 50px and 250px
-        const translateX = Math.cos(angle) * distance;
-        const translateY = Math.sin(angle) * distance;
+            // Randomize the direction and distance of the particle
+            const angle = Math.random() * 2 * Math.PI; // Random angle in radians
+            const distance = Math.random() * 200 + 50; // Random distance between 50px and 250px
+            const translateX = Math.cos(angle) * distance;
+            const translateY = Math.sin(angle) * distance;
 
-        // Trigger the animation
-        requestAnimationFrame(() => {
-            particle.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
-            particle.style.opacity = 0;
-        });
+            // Trigger the animation
+            requestAnimationFrame(() => {
+                particle.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.5)`;
+                particle.style.opacity = 0;
+            });
 
-        // Remove the particle after the animation ends
-        setTimeout(() => {
-            particle.remove();
-        }, 1000);
-    }
+            // Remove the particle after the animation ends
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
     </script>
 </body>
 </html>
