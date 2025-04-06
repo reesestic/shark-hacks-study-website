@@ -96,6 +96,10 @@
             cursor: pointer;
             font-size: 24px;
         }
+
+        .text-background {
+        color: white; /* Makes the text white */
+    }
     </style>
 </head>
 <body>
@@ -109,7 +113,7 @@
                 <a href="#" onclick="changeBackground('Night.JPG')">Night</a>
                 <a href="#" onclick="changeBackground('Field.JPG')">Field</a>
                 <a href="#" onclick="changeBackground('white')">White</a>
-                <a href="#" onclick="changeBackground('dark')">Dark Grey</a>
+                <a href="#" onclick="changeBackground('steel blue')">Steel Blue</a>
             </div>
         </div>
             <!-- Ambiance Dropdown -->
@@ -268,18 +272,29 @@
 
         function changeBackground(option) {
             const body = document.body;
+            const textElements = document.querySelectorAll('h1, p, label, #elapsed-time'); // Select text elements
 
             if (option === 'white') {
                 body.style.backgroundImage = 'none';
                 body.style.backgroundColor = 'white';
-            } else if (option === 'dark') {
+                textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
+            } else if (option === 'steel blue') {
                 body.style.backgroundImage = 'none';
-                body.style.backgroundColor = '#333'; // Dark grey
+                body.style.backgroundColor = '#9EAFD2'; // Sky bluef
+                textElements.forEach(el => el.classList.remove('text-background')); // Remove background from text
             } else {
                 body.style.backgroundImage = `url('/static/pictures/${option}')`;
-                body.style.backgroundSize = 'cover';
+                body.style.backgroundSize = 'cover'; // Ensures the image covers the screen
                 body.style.backgroundRepeat = 'no-repeat';
-                body.style.backgroundPosition = 'center';
+                body.style.backgroundPosition = 'center center';
+                body.style.backgroundAttachment = 'fixed'; // Keeps the background fixed during scrolling
+
+                        // Add background to text only for Library and Night
+                if (option === 'Library.JPG' || option === 'Night.JPG') {
+                    textElements.forEach(el => el.classList.add('text-background'));
+                } else {
+                    textElements.forEach(el => el.classList.remove('text-background'));
+                }
             }
         }
 
